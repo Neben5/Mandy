@@ -25,19 +25,19 @@ fn main() {
                 break;
             }
             Key::Right => {
-                offset.a += (1. / (8. * zoom));
+                offset.a += 1. / (8. * zoom);
                 set(offset.a, offset.b, zoom, MAX_ITER, &mut stdout);
             }
             Key::Left => {
-                offset.a -= (1. / (8. * zoom));
+                offset.a -= 1. / (8. * zoom);
                 set(offset.a, offset.b, zoom, MAX_ITER, &mut stdout);
             }
             Key::Up => {
-                offset.b -= (1. / (16. * zoom));
+                offset.b += 1. / (16. * zoom);
                 set(offset.a, offset.b, zoom, MAX_ITER, &mut stdout);
             }
             Key::Down => {
-                offset.b += (1. / (16. * zoom));
+                offset.b -= 1. / (16. * zoom);
                 set(offset.a, offset.b, zoom, MAX_ITER, &mut stdout);
             }
             Key::Char('s') => {
@@ -54,13 +54,7 @@ fn main() {
     }
 }
 
-fn set(
-    a_offset: f64,
-    b_offset: f64,
-    zoom: f64,
-    MAX_ITER: usize,
-    mut stdout: &mut RawTerminal<Stdout>,
-) {
+fn set(a_offset: f64, b_offset: f64, zoom: f64, max_iter: usize, stdout: &mut RawTerminal<Stdout>) {
     let mut view = Viewer::init(
         Coordinates::from(terminal_size().unwrap()),
         Imaginary {
@@ -72,7 +66,7 @@ fn set(
 
     for row in 0..view.img.elems.len() {
         for col in 0..view.img.elems[0].len() {
-            while view.img.elems[row][col].niter < MAX_ITER.into()
+            while view.img.elems[row][col].niter < max_iter.into()
                 && !(view.img.elems[row][col].isdiv())
             {
                 view.img.elems[row][col].z = view.img.elems[row][col].iter();
@@ -83,7 +77,7 @@ fn set(
 
     for row in 0..view.img.elems.len() {
         for col in 0..view.img.elems[0].len() {
-            let c = ((((view.img.elems[row][col].niter - 1) as f64) / (MAX_ITER as f64))
+            let c = ((((view.img.elems[row][col].niter - 1) as f64) / (max_iter as f64))
                 .sin()
                 .sqrt()
                 * 255.0) as u8;
